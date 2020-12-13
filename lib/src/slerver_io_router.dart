@@ -7,13 +7,19 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'slerver_io_constants.dart';
-import '../src/slerver_io.dart';
-import '../src/slerver_io_route.dart';
+import 'slerver_io.dart';
+import 'slerver_io_route.dart';
 
+/// The router, This router is used when the server (Slerver) 
+/// wants to reach a resource (route) of this client. This 
+/// object will be in charge of mapping route <-> action each 
+/// time. Once the resource is reached, the router will load 
+/// the appropriate action, otherwise an exception will be thrown.
 class SlerverIORouter {
   final SlerverIO _client;
   final SlerverIORoute _routes = SlerverIORoute();
   final Logger _logger = Logger(printer: PrettyPrinter(methodCount: 0, errorMethodCount: 8, lineLength: 120, colors: true, printEmojis: true, printTime: false));
+  /// In case of auto reconnection, the maximum reconnection is 30
   static const int maxReconnectionTimes = 30;
 
   SlerverIORouter(this._client) : assert(_client != null) {

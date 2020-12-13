@@ -4,26 +4,34 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import './slerver_io_router.dart';
 import 'package:slerver_io/src/slerver_io_constants.dart';
 import 'package:logger/logger.dart';
+
+import 'slerver_io_router.dart';
 
 class SlerverIO {
   Socket _client;
   StreamController<Uint8List> _dataStream;
+  /// To check whether client should reconnect or not without the application closed.
   final bool autoReconnect;
+  /// Whether client is connected to `Slerver`
   bool connected = false;
+  /// Stacktrace set when an exception is thrown
   dynamic error, errorStackTrace;
+  /// logger, for log reporting. see alson [logger](https://pub.dev/packages/logger)
   final Logger l = Logger(printer: PrettyPrinter(methodCount: 0, errorMethodCount: 8, lineLength: 120, colors: true, printEmojis: true, printTime: false));
+  /// IP address to which `slerver` is bound
   final String address;
+  /// port number on which `slerver` is listens
   final int port;
+  /// Instance of Router, see also `SlerverIORouter`
   SlerverIORouter routerIO;
+
   SlerverIORedirectRoute _redirectRoute = SlerverIORedirectRoute();
 
   SlerverIO._empty({this.autoReconnect = true, this.address, this.port});
 
-  get setClose => null;
-
+  /// Close all files descriptor
   close() async {
     try {
       _redirectRoute?.close();
@@ -34,8 +42,10 @@ class SlerverIO {
     l.d('Connection terminated');
   }
 
+  /// Getter for set of subscribed routes.
   SlerverIORedirectRoute get router => _redirectRoute;
 
+  /// Unique way to create an instance of Slerver client
   static Future<SlerverIO> connect(String address, int port,
       {autoReconnect = true}) async {
     assert(address != null && port != null);
@@ -44,6 +54,7 @@ class SlerverIO {
         ._initClient();
   }
 
+  /// Current instance of the Socket outgoing data stream.
   StreamController<Uint8List> get getDataStream => _dataStream;
 
   Future<SlerverIO> _initClient() async {
@@ -80,6 +91,7 @@ class SlerverIO {
 
   Future<SlerverIO> get reconnect => _initClient();
 
+  /// Main function for error management
   void errorManager(Object error, [StackTrace stackTrace]) {
     l.e('Error occurs', [error, stackTrace]);
     if (connected)
@@ -95,21 +107,24 @@ class SlerverIO {
     return '$address:$port';
   }
 
+  /// When socket stream close is triggered
   onClose() {
     this.connected = false;
     close();
   }
-
+  /// When socket stream is sent to pause
   onPause() {
     l.w('Pause event ');
     onResume();
   }
-
+  /// When socket is resume
   onResume() {
     l.w('Resume event');
     onClose();
   }
 
+  /// function use to send data to `send data`. 
+  /// ### Note that *data arg* should contain params & papth field
   send(Map<String, Object> data) {
     try {
       _dataStream.add(Uint8List.fromList(

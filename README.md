@@ -1,7 +1,7 @@
 # SlerverIO
 
 This plugin provides client way to interconnect flutter app.<br>
-##### Learn more at [Bixterprise.com](flutter.bixterprise.com)
+##### Learn more at [Bixterprise.com](http://flutter.bixterprise.com)
 ## Usage
 
 Lets take a look at how to use `SlerverIO` to connect two Flutter app for data sharing on both Android and iOS.
