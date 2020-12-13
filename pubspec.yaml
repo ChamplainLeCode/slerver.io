@@ -1,8 +1,8 @@
 name: slerver_io
-description: A new flutter plugin project.
-version: 0.0.1
-author:
-homepage:
+description: This plugin provides client way to interconnect flutter app.
+version: 0.9.0
+homepage: https://flutter.bixterprise.com
+repository: https://github.com/ChamplainLeCode/slerver.io
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
